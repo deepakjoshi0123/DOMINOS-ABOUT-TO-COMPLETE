@@ -1,0 +1,30 @@
+.screen{
+    background-color: red;
+    width:100%
+}
+
+.container {
+    background-color: #ffcc33;
+    margin-left: 100px;
+}
+
+.first {
+   overflow: scroll;
+    padding-top: 70px;
+    width: 600px;
+    float: left;
+    height: 700px;
+    background-color: rgb(219, 205, 223);
+}
+
+.second {
+    margin-left: 50px;
+    margin-top: 100px;
+    text-align: center;
+    width: 400px;
+    float: left;
+    height: 350px;
+    background-color: rgb(187, 171, 118);
+    overflow:scroll ;
+    border-radius: 5px;
+}
