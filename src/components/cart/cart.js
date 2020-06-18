@@ -3,6 +3,11 @@ import Aux from '../../hoc/Aux';
 import classes from './cart.css';
 import CartDel from './CartDel/CartDel';
 import Button from'../UI/Button/Button';
+import onion from '../../assets/images/onion.jpg';
+import tomato from '../../assets/images/tomato.jpg';
+import mixveg from '../../assets/images/mixVeg.jpeg';
+import cheese from '../../assets/images/cheese.jpeg';
+import CardMedia from '@material-ui/core/CardMedia';
 
 const  MyCart= ( props ) => {
            
@@ -16,10 +21,11 @@ const  MyCart= ( props ) => {
                     }      
              })  
           
-            return (
+        return (
         <Aux key={pizza.OrderId} >
+        
         <div className={classes.card}> 
-      {pizza.del===1 ? (
+       {pizza.del===1 ? (
         <div>
            <ul className={classes.bullets} > 
            <li> Order Id {pizza.OrderId}</li>
@@ -33,7 +39,7 @@ const  MyCart= ( props ) => {
            } 
            </ul>
            <p> PRICE  {pizza.price} </p>
-           <CartDel
+           <CartDel      
            del={()=> props.delItem(pizza.OrderId)}
            delItem={()=>props.del(pizza.OrderId)}
            addItem={()=>props.add(pizza.OrderId)}
