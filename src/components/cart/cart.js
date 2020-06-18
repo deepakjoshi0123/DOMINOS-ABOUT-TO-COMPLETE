@@ -41,10 +41,10 @@ export default function  MyCart( props ) {
        {pizza.del===1 ? (
         <div>
             
-             {pizza.name.localeCompare("onion") ===0 ? <img className={classes.media}  src={onion} /> : null }
-             {pizza.name.localeCompare("Tomato")===0 ? <img className={classes.media}  src={tomato} /> : null }
-             {pizza.name.localeCompare("mixVeg")===0 ? <img img className={classes.media}  src={mixveg} /> : null }
-             {pizza.name.localeCompare("cheese")===0 ? <img className={classes.media}  src={cheese} /> : null }
+             {pizza.name.localeCompare("onion") ===0 ? <img alt = " pizza"className={classes.media}  src={onion} /> : null }
+             {pizza.name.localeCompare("Tomato")===0 ? <img alt = " pizza"  className={classes.media}  src={tomato} /> : null }
+             {pizza.name.localeCompare("mixVeg")===0 ? <img alt = " pizza" img className={classes.media}  src={mixveg} /> : null }
+             {pizza.name.localeCompare("cheese")===0 ? <img alt = " pizza"  className={classes.media}  src={cheese} /> : null }
              
 
             <Typography variant="body2" color="textSecondary" component="p">
