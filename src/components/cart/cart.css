@@ -25,8 +25,13 @@ ul {
     color: rgb(23, 96, 155);
     font-style: italic;
 }
+.media{
+    height: 30%;
+    width: 40%
+
+}
 .button {
-    background-color: rgb(41, 161, 165); /* Green */
+    background-color: rgb(192, 203, 236); /* Green */
     border: none;
     color: white;
     padding: 15px 32px;
