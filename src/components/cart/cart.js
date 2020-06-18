@@ -1,15 +1,22 @@
 import React from 'react';
-import Aux from '../../hoc/Aux';
-import classes from './cart.css';
+
 import CartDel from './CartDel/CartDel';
-import Button from'../UI/Button/Button';
+
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import Typography from '@material-ui/core/Typography';
+
+
+
 import onion from '../../assets/images/onion.jpg';
 import tomato from '../../assets/images/tomato.jpg';
 import mixveg from '../../assets/images/mixVeg.jpeg';
 import cheese from '../../assets/images/cheese.jpeg';
-import CardMedia from '@material-ui/core/CardMedia';
 
-const  MyCart= ( props ) => {
+export default function  MyCart( props ) {
            
         let arr =[]; 
         const listItems = props.MyCart.map((pizza) => { 
@@ -19,50 +26,61 @@ const  MyCart= ( props ) => {
                   {
                       arr.push(key)
                     }      
-             })  
+             })  ;   
           
         return (
-        <Aux key={pizza.OrderId} >
-        
-        <div className={classes.card}> 
+
+            <Card   >
+            <CardActionArea>
+           <CardMedia
+             
+             image={props.img}
+             title="Pizza"
+           />
+        <CardContent> 
        {pizza.del===1 ? (
         <div>
-           <ul className={classes.bullets} > 
-           <li> Order Id {pizza.OrderId}</li>
-           <li  className={classes.col}>Pizza Name - {pizza.name}</li> 
-           <li  className={classes.col}> Size -{pizza.size}</li>
-           <li className={classes.col} >QTY - {pizza.qty}   </li>
-          {arr.length!==0? <li className={classes.col} >your extra fillings -</li>:null}
-      
-       {
-           arr.map((type)=> <p className={classes.col}>{type}</p> )
+             {pizza.name.localeCompare("onion") ===0 ? <CardMedia  image={onion} /> : null }
+             {pizza.name.localeCompare("tomato")===0 ? <CardMedia   image={tomato} /> : null }
+             {pizza.name.localeCompare("mixveg")===0 ? <CardMedia   image={mixveg} /> : null }
+             {pizza.name.localeCompare("cheese")===0 ? <CardMedia   image={cheese} /> : null }
+             
+
+            <Typography variant="body2" color="textSecondary" component="p">
+            {pizza.name} </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+            {pizza.size} </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+           {pizza.qty} </Typography>
+           {arr.length!==0? <Typography variant="body2" color="textSecondary" component="p"> your extra fillings  </Typography> :null}
+           {
+           arr.map((type)=> <Typography variant="body2" color="textSecondary" component="p"> >{type}</Typography> )
            } 
-           </ul>
-           <p> PRICE  {pizza.price} </p>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {pizza.price} </Typography>
            <CartDel      
            del={()=> props.delItem(pizza.OrderId)}
            delItem={()=>props.del(pizza.OrderId)}
            addItem={()=>props.add(pizza.OrderId)}
-        /> 
-       </div>) : ( null)}
-    </div>
-        <br/>
-        </Aux>
+           /> 
+           </div>) : ( null)}
+           </CardContent>
+           </CardActionArea>
+           </Card> 
+        
               ) }
         );
      
     return (
-        <Aux key={props.MyCart.id}>
-            <Button btnType="Success" >CHECKOUT </Button>
-            <div className={classes.CartHeader}>
-            <h3  >Your Current Cart</h3>
+        <Card>
+            <Typography> Your Current Cart</Typography>
             <h4>Total price : {props.price}</h4>
             <ul>
                 {props.MyCart.length !== 0 ? listItems : null}  
             </ul>
-            </div>
-        </Aux>
-    );
+            </Card>
+        
+      );
     }
     
-export default MyCart;
+

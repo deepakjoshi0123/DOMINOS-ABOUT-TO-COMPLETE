@@ -26,7 +26,7 @@ export default function buildControl(props) {
 
     const classes = useStyles();
   return(  <Card  className={classes.root} >
-      <CardActionArea>
+         <CardActionArea>
         <CardMedia
           className={classes.media}
           image={props.img}

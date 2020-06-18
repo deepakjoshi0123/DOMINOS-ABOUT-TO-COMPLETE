@@ -134,7 +134,7 @@ pizzaSize = (pizzaType,event)=>
         let Order = this.state.orderCart.filter(order => order.OrderId === orderid)
         let upOrder = this.state.orderCart.filter(order => order.OrderId !==orderid) ; 
 
-        let initPrice =Order[0].price;
+       // let initPrice =Order[0].price;
 
         let updatedPrice = 0;
          for(let key in Order[0].fillings)
@@ -146,7 +146,7 @@ pizzaSize = (pizzaType,event)=>
              }
          }
          
-         Order[0].price = updatedPrice - INGREDIENT_PRICES[Order[0].name]; 
+         Order[0].price =Order[0].price - updatedPrice - INGREDIENT_PRICES[Order[0].name] ; 
          let newPrice = this.state.CartPrice - Order[0].price; 
          this.setState({CartPrice:newPrice})
 
@@ -174,7 +174,7 @@ pizzaSize = (pizzaType,event)=>
              let reporder = this.state.orderCart.filter(order =>  order.name.localeCompare( type )===0  )
              let real = this.state.orderCart.filter(order =>  order.name.localeCompare( type )!== 0)
 
-             if(reporder[0]!=undefined)
+             if(reporder[0]!==undefined)
               {
                   reporder[0].qty = reporder[0].qty + 1 ;
                   real.push(reporder[0])
