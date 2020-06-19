@@ -1,28 +1,38 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Aux';
 import BuildControls from '../../components/PizzaMenu/BuildControls/BuildControls';
-import Modal from '../../components/UI/Modal/Modal';
 import Fillings from '../../components/PizzaMenu/Fillings/Fillings';
 import Cart from '../../components/cart/cart'
 import classes from '../PizzaList/pizzaList.css'
 
-let Filling ={
+// for filling the same order 
+
+let comp={  // to compare new order to orders in cart if similar add to exisiting order 
     extraCheese: 0,
+    ExtraOnion : 0,
+    ExtraTomato : 0 ,
+    Morzilla : 0
+
+}
+ 
+let Filling ={     // fillings to keep track which one  is selected 
+    extraCheese: 0,  
     ExtraOnion : 0,
     ExtraTomato : 0 ,
     Morzilla : 0
 } 
 
+
 let PizzaId=1;
 let size ='large';
-const INGREDIENT_PRICES = {
+const INGREDIENT_PRICES = {  //pizza prices 
     onion: 75,
     cheese: 95,
     mixVeg: 110,
     Tomato: 80,
 };
 
-const ExtraFillings = {
+const ExtraFillings = {  // price of extra fillings 
     extraCheese: 50,
     ExtraOnion : 20,
     ExtraTomato :25 ,
@@ -55,32 +65,18 @@ class PizzaList extends Component {
 pizzaSize = (pizzaType,event)=>
     {
         size = event.target.value;
-     
     }
 
  //store fillings user want to add   
     AddFillings=(fil)=> {
         let stfil={...this.state.ExtraFillings}
         stfil[fil]=1;
-        this.setState({ExtraFillings: stfil})
-        Filling[fil]= 1 ;   
+        this.setState({ExtraFillings: stfil})  // way to initiallise nested obj state 
+        Filling[fil]= 1 ;   // set to all 0 when modal is closed , so next time custom opens added get removed 
+        comp[fil]=1;  // for checking next order is same or diff {wheather to create the new order or inc qty }
     }
-
-    updatePurchaseState = (ingredients) => {
-        const sum = Object.keys( ingredients )
-            .map( igKey => {
-                return ingredients[igKey]; 
-            } )
-            .reduce( ( sum, el ) => {
-                return sum + el;
-            }, 0 );
-        this.setState( { purchasable: sum > 0 } );
-    }
-
-    calPriceUpd(){
-
-    }
- 
+  
+    // used for sorting 
      compare = (a, b) => {
        
         const ordera = a.OrderId;
@@ -115,12 +111,12 @@ pizzaSize = (pizzaType,event)=>
              }
          }
          
-         console.log(updatedPrice , " price " ,INGREDIENT_PRICES[Order[0].name])
+        
          Order[0].price= Order[0].price + updatedPrice + INGREDIENT_PRICES[Order[0].name]; 
         // push order on the same location ,prefered sort
         
          updatedOrder.push(Order[0]);
-         updatedOrder.sort(this.compare);
+         updatedOrder.sort(this.compare); // O(nlogn) " splice was of O(nlogn)"
          
         //
          let newPrice = this.state.CartPrice + Order[0].price - initPrice; 
@@ -147,10 +143,9 @@ pizzaSize = (pizzaType,event)=>
          }
          
          Order[0].price =Order[0].price - updatedPrice - INGREDIENT_PRICES[Order[0].name] ; 
-         let newPrice = this.state.CartPrice - Order[0].price; 
+         let newPrice = Order[0].price; 
          this.setState({CartPrice:newPrice})
 
-            console.log(orderid , Order[0].qty)
         if(Order[0].qty===1)
            { 
                updatedOrder = this.state.orderCart.filter(order => order.OrderId !==orderid) ; 
@@ -162,27 +157,48 @@ pizzaSize = (pizzaType,event)=>
           {
                Order[0].qty=Order[0].qty-1; 
                upOrder.push(Order[0]);
-               console.log("Order",Order,upOrder , "hello",this.state.orderCart) ; 
                upOrder.sort(this.compare)
                this.setState({orderCart:upOrder } ) 
-               console.log(this.state.orderCart , "updated state") 
           }
+    }
+            
+    compareobj(obj){
+        if(obj.extraCheese === comp.extraCheese && obj.ExtraOnion === comp.ExtraOnion && obj.ExtraTomato === comp.ExtraTomato && obj.Morzilla === comp.Morzilla)
+           return true;
+        else 
+           return false;    
     }
 
     addIngredientHandler = ( type ) => {
              
              let reporder = this.state.orderCart.filter(order =>  order.name.localeCompare( type )===0  )
              let real = this.state.orderCart.filter(order =>  order.name.localeCompare( type )!== 0)
-
-             if(reporder[0]!==undefined)
+            // console.log(reporder[0].fillings)
+             if(reporder[0]!==undefined && this.compareobj(reporder[0].fillings)===true)
               {
                   reporder[0].qty = reporder[0].qty + 1 ;
+               
+                  // this would be better if its function 
+
+                  let updatedPrice = 0;
+                  for(let key in reporder[0].fillings)
+                  {
+                   
+                      if(reporder[0].fillings[key]===1)
+                      {
+                        updatedPrice = updatedPrice + ExtraFillings[key]; 
+                      }
+                  }
+                  
+                  reporder[0].price = reporder[0].price + updatedPrice + INGREDIENT_PRICES[reporder[0].name] ; 
+                   let ltprc= this.state.CartPrice + updatedPrice + INGREDIENT_PRICES[reporder[0].name]
+
                   real.push(reporder[0])
                   real.sort(this.compare)
-                  this.setState({orderCart:real})
+                  this.setState({orderCart:real , CartPrice:ltprc})
                   return ;
               }
-             console.log("creating this order")
+          // if it's new order ..... than don't increase it's frequency 
          let order = {
              
              OrderId:0,
@@ -238,32 +254,32 @@ pizzaSize = (pizzaType,event)=>
         price=0;
         order=null;
         this.setState( {ing: updatedIngredients ,CartPrice:priceee } ); 
-        this.updatePurchaseState(updatedIngredients);    
+        
     }
  
     delItem = ( id ) => {
 
-        PizzaId=PizzaId-1;
+        PizzaId=PizzaId-1; // decrease id so in future we gets continous freqency 
         let Order = this.state.orderCart.filter(order => order.OrderId === id)
         let updatedPrice = 0;
         for(let key in Order[0].fillings)
         {
           
-            if(Order[0].fillings[key]===1)
+          if(Order[0].fillings[key]===1)
             {
               updatedPrice = updatedPrice + ExtraFillings[key];  
             }
         }
       
-        let prc = this.state.CartPrice - updatedPrice -INGREDIENT_PRICES[Order[0].name];
+        let prc = this.state.CartPrice - updatedPrice -INGREDIENT_PRICES[Order[0].name]*Order[0].qty;
         let updatedOrder = this.state.orderCart.filter(order => order.OrderId !==id) ; 
         this.setState( { orderCart : updatedOrder , CartPrice:prc} );
     }
-
+ // used in modal 
     purchaseHandler = () => {
         this.setState({purchasing: true});
     }
-
+// used in modal closing 
     purchaseCancelHandler = () => {
         this.setState({purchasing: false});
         let stfil = {...this.state.ExtraFillings}
@@ -272,41 +288,28 @@ pizzaSize = (pizzaType,event)=>
         stfil.ExtraTomato=0;
         stfil.Morzilla=0;
         this.setState({ExtraFillings:stfil})
-    }
-
-    purchaseContinueHandler = () => {
-        alert('You continue!');
-    }
+    }  
  
     render () {
-       
+        //show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}
         return (
             <Aux>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
-                    <Fillings 
-                        closeModel={this.purchaseCancelHandler}
-                        key = {this.state.ingredients}
-                        AddFill={this.AddFillings}
-                        close={this.close}
-                        ingredientAdded={this.addIngredientHandler}
-                        ingredientRemoved={this.removeIngredientHandler}
-                        ingredients={ExtraFillings}
-                        fil={this.state.ExtraFillings}
-                        price={this.state.totalPrice}
-                        purchaseCancelled={this.purchaseCancelHandler}
-                        purchaseContinued={this.purchaseContinueHandler} />
-                </Modal>  
+                <Fillings 
+                        show={this.state.purchasing}   // model open close
+                        closeModel={this.purchaseCancelHandler} // function to toggle purchasing 
+                        AddFill={this.AddFillings}  // change state of fillings {ExtraFillings} whichever is clicked and turn that into red 
+                        ingredients={ExtraFillings} //  to show price of extra fillings 
+                        fil={this.state.ExtraFillings} // to see which toppings is filled 
+                         />
                <div className={classes.screen}>
                <div className={classes.container}>    
                 <div className={classes.first}>     
                 <BuildControls
                     key={this.state.ingredients}
-                    chooseSize={this.pizzaSize}
+                    chooseSize={this.pizzaSize} // to change size of pizza 
                     ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler}
-                    purchasable={this.state.purchasable}  
                     ordered={this.purchaseHandler}
-                    price={this.state.totalPrice} />
+                   /> 
                 </div>
                 <div className={classes.second}>
                 <Cart
@@ -314,8 +317,6 @@ pizzaSize = (pizzaType,event)=>
                  del={this.del}
                  MyCart={this.state.orderCart}
                  delItem={this.delItem}
-                 purchasable={this.state.purchasable}
-                 ordered={this.purchaseHandler}
                  price={this.state.CartPrice}
                 />   
                 </div>

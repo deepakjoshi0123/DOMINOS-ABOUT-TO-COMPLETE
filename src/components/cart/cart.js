@@ -10,7 +10,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 
 
-
+import cart from '../../assets/images/emptycart.jpg'
 import onion from '../../assets/images/onion.jpg';
 import tomato from '../../assets/images/tomato.jpg';
 import mixveg from '../../assets/images/mixVeg.jpeg';
@@ -20,9 +20,9 @@ export default function  MyCart( props ) {
            
         let arr =[]; 
         const listItems = props.MyCart.map((pizza) => { 
-        arr =[]; 
-             Object.keys( pizza.fillings).forEach((key,index)=>{   
-               if(pizza.fillings[key] === 1) 
+        arr =[]; //empty array so prev order fillings don't render
+             Object.keys( pizza.fillings).forEach((key)=>{   
+               if(pizza.fillings[key] === 1) //means that fillin is added 
                   {
                       arr.push(key)
                     }      
@@ -32,7 +32,7 @@ export default function  MyCart( props ) {
 
             <Card   >
             <CardActionArea>
-           <CardMedia
+            <CardMedia
              
              image={props.img}
              title="Pizza"
@@ -53,9 +53,10 @@ export default function  MyCart( props ) {
             {pizza.size} </Typography>
             <Typography variant="body2" color="textSecondary" component="p">Qty-
            {pizza.qty} </Typography>
+           
            {arr.length!==0? <Typography variant="body2" color="textSecondary" component="p"> your extra fillings  </Typography> :null}
            {
-           arr.map((type)=> <Typography variant="body2" color="textSecondary" component="p"> >{type}</Typography> )
+           arr.map((type)=> <Typography variant="body2" color="textSecondary" component="p"> {type}</Typography> )
            } 
           <Typography variant="body2" color="textSecondary" component="p"><p>price</p>
             {pizza.price} </Typography>
@@ -76,7 +77,7 @@ export default function  MyCart( props ) {
             <Typography> Your Current Cart</Typography>
             <h4>Total price : {props.price}</h4>
             <ul>
-                {props.MyCart.length !== 0 ? listItems : null}  
+                {props.MyCart.length !== 0 ? listItems : <img src={cart} alt="cart" className={classes.media2}/>}  
             </ul>
             </Card>
         
